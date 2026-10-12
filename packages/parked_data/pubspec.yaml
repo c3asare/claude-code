@@ -1,0 +1,20 @@
+name: parked_data
+description: Persistence layer (Drift/SQLite). Runs on mobile and desktop.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.6.0
+  flutter: ">=3.27.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  parked_core:
+  drift: ^2.22.0
+  drift_flutter: ^0.2.0
+  path_provider: ^2.1.0
+
+dev_dependencies:
+  drift_dev: ^2.22.0
+  build_runner: ^2.4.0

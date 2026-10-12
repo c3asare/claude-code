@@ -1,0 +1,11 @@
+name: parked_workspace
+publish_to: none
+
+environment:
+  sdk: ^3.6.0
+
+workspace:
+  - packages/parked_core
+  - packages/parked_sensing
+  - packages/parked_data
+  - apps/parked

@@ -1,0 +1,14 @@
+library parked_core;
+
+export 'src/models/car.dart';
+export 'src/models/geo_point.dart';
+export 'src/models/park_event.dart';
+export 'src/models/sweeping_schedule.dart';
+export 'src/models/activity_sample.dart';
+export 'src/ports/activity_source.dart';
+export 'src/ports/location_source.dart';
+export 'src/ports/repositories.dart';
+export 'src/logic/park_transition_engine.dart';
+export 'src/logic/sweeping_planner.dart';
+export 'src/logic/geo_math.dart';
+export 'src/testing/in_memory_repositories.dart';

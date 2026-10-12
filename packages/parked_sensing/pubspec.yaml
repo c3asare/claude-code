@@ -1,0 +1,16 @@
+name: parked_sensing
+description: Mobile-only sensing layer (iOS/Android). Implements parked_core ports.
+publish_to: none
+resolution: workspace
+
+environment:
+  sdk: ^3.6.0
+  flutter: ">=3.27.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  parked_core:
+  flutter_activity_recognition: ^4.0.0 # verify latest with `flutter pub outdated`
+  geolocator: ^13.0.0
+  permission_handler: ^11.3.0
