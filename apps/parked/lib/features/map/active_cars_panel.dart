@@ -60,8 +60,9 @@ class _Row extends ConsumerWidget {
       data: (s) {
         if (s.isUnknown) return ('No sweeping schedule found here', null);
         final now = DateTime.now();
-        if (s.isInWindow(now))
+        if (s.isInWindow(now)) {
           return ('Sweeping is happening now – move your car!', scheme.error);
+        }
         return (
           'Next sweep ${_fmtWindow(s.window!)}',
           s.window!.start.difference(now) < const Duration(hours: 24)
