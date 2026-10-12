@@ -7,11 +7,13 @@ import 'package:parked_sensing/parked_sensing.dart';
 import 'package:uuid/uuid.dart';
 
 class MobileDetector {
-  MobileDetector(this._repo, {OsActivitySource? activity, GeolocatorLocationSource? location})
+  MobileDetector(this._repo, this._notifier,
+      {OsActivitySource? activity, GeolocatorLocationSource? location})
       : _activity = activity ?? OsActivitySource(),
         _location = location ?? GeolocatorLocationSource();
 
   final ParkingRepository _repo;
+  final ParkNotifier _notifier;
   final OsActivitySource _activity;
   final GeolocatorLocationSource _location;
   final _engine = ParkTransitionEngine();
@@ -38,12 +40,14 @@ class MobileDetector {
     // One-shot fix at the moment of confirmation; no continuous GPS.
     final fix = await _location.currentFix();
     if (fix == null) return;
-    await _repo.saveEvent(ParkEvent(
+    final pending = ParkEvent(
       id: const Uuid().v4(),
       position: fix.point,
       accuracyMeters: fix.accuracyMeters,
       parkedAt: signal.parkedAt,
       source: ParkSource.auto,
-    ));
+    );
+    await _repo.saveEvent(pending);
+    await _notifier.promptParked(pending);
   }
 }

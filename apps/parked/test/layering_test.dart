@@ -6,9 +6,13 @@ import 'package:flutter_test/flutter_test.dart';
 /// shared code.
 void main() {
   test('shared app code never imports sensing or mobile-only plugins', () {
-    const allowed = {'lib/main_mobile.dart', 'lib/bootstrap/mobile_detector.dart'};
+    const allowed = {
+      'lib/main_mobile.dart',
+      'lib/bootstrap/mobile_detector.dart',
+      'lib/bootstrap/local_park_notifier.dart',
+    };
     final banned = RegExp(
-        r"import\s+'package:(parked_sensing|geolocator|flutter_activity_recognition|permission_handler)/");
+        r"import\s+'package:(parked_sensing|geolocator|flutter_activity_recognition|permission_handler|flutter_local_notifications)/");
     final offenders = <String>[];
     for (final f in Directory('lib').listSync(recursive: true).whereType<File>()) {
       final path = f.path.replaceAll('\\', '/');

@@ -8,6 +8,7 @@ export 'src/models/activity_sample.dart';
 export 'src/ports/activity_source.dart';
 export 'src/ports/location_source.dart';
 export 'src/ports/repositories.dart';
+export 'src/ports/park_notifier.dart';
 export 'src/logic/park_transition_engine.dart';
 export 'src/logic/sweeping_planner.dart';
 export 'src/logic/geo_math.dart';

@@ -29,6 +29,24 @@ Leak prevention: `parked_sensing` is imported only by `lib/main_mobile.dart` and
 - Result is a *pending* `ParkEvent` (carId null) -> "Which car is this?" sheet.
 - **Biggest risk, spike first on real devices:** `flutter_activity_recognition` streams only while the process lives. Surviving app kill needs (Android) a foreground service or Activity Transition API receiver, and (iOS) significant-location-change / CLVisit wake-ups, which have no mainstream Flutter plugin. Budget a small native module per platform. Fallback: `flutter_background_geolocation` (Transistorsoft), which does motion-triggered stationary detection robustly; its Android release license is paid.
 
+## Background operation (app closed)
+
+The prompt is a system notification (`ParkNotifier` port, `LocalParkNotifier` impl), so it shows with the app foreground, backgrounded, or woken headlessly. Tap opens the "Which car is this?" sheet; ignoring it discards the pending event. Making detection survive app termination is native work inside `parked_sensing` only; core, data, and UI do not change.
+
+**Android (most reliable path)**
+- Register for the Activity Recognition **Transition API** (`IN_VEHICLE` exit, `WALKING`/`STILL` enter) with a PendingIntent to a manifest-declared BroadcastReceiver. The OS delivers it even after the app is swiped away, with no always-on service and minimal battery.
+- The receiver enqueues a WorkManager job (or short foreground service) that spins up a headless Flutter engine, runs `ParkTransitionEngine`, takes one fix, writes the pending event, and posts the notification. Needs the repository to be Drift (the in-memory one dies with the process).
+- Permissions: `ACTIVITY_RECOGNITION`, `ACCESS_FINE_LOCATION`, `ACCESS_BACKGROUND_LOCATION` (separate prompt on Android 10+), `POST_NOTIFICATIONS` (13+). Re-register on boot (`RECEIVE_BOOT_COMPLETED`).
+- OEM battery killers (Xiaomi, Samsung, etc.) can still suppress it; surface a "battery optimization" onboarding step. A persistent foreground-service notification is the heavy fallback if testing shows missed parks.
+
+**iOS (cannot run continuously; it gets relaunched)**
+- Request **Always** location. Use significant-location-change and/or `CLVisit` monitoring: the system relaunches the app in the background when you move or dwell, even after a force-quit-free termination (a user force-quit stops relaunch until next manual open).
+- On wake, query `CMMotionActivityManager.queryActivityStarting(from:to:)` for recent history to find the last automotive -> walking/stationary transition, then take one location fix and post the notification. History query means no always-on process is needed.
+- Expect App Review scrutiny of "Always" location; the purpose strings must say it detects where you parked.
+- Detection can lag by minutes (relaunch is system-scheduled), so the notification may arrive after you've walked away. That is a platform limit, not a bug.
+
+Build order: (1) Drift repos, (2) Android Transition receiver + headless engine, (3) iOS Visits + Core Motion history, (4) battery onboarding. Test on physical devices; simulators cannot validate any of this.
+
 ## Package tradeoffs
 
 **Activity recognition**
