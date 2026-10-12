@@ -163,8 +163,8 @@ class _CarPainter extends CustomPainter {
     }
     // Handlebars.
     canvas.drawLine(
-      Offset(cx - w * 2.0, top + l * 0.24),
-      Offset(cx + w * 2.0, top + l * 0.24),
+      Offset(cx - w * 1.5, top + l * 0.24),
+      Offset(cx + w * 1.5, top + l * 0.24),
       Paint()
         ..color = const Color(0xFF15161A)
         ..strokeWidth = s * 0.04

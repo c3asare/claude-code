@@ -1,15 +1,6 @@
 # Parked: architecture and package choices
 
-Status: scaffold written by hand; **not compiled** (no Flutter SDK in the authoring environment). First steps on a dev machine:
-
-```
-flutter create --platforms=ios,android,macos,windows apps/parked --project-name parked   # generates platform folders only; keep our lib/ and pubspec
-flutter pub get
-cd packages/parked_data && dart run build_runner build
-cd ../parked_core && dart test        # pure Dart, should pass first
-cd ../../apps/parked && flutter test
-```
-Package versions in the pubspecs are best guesses; run `flutter pub upgrade --major-versions`.
+Status: core, data and app layers compile, analyze clean and pass tests (see `docs/MAC_HANDOFF.md`). Native Android/iOS detection code is written but unbuilt.
 
 ## Layers (Dart pub workspace)
 
