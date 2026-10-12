@@ -7,6 +7,8 @@ class Cars extends Table {
   TextColumn get id => text()();
   TextColumn get name => text()();
   IntColumn get colorValue => integer()();
+  IntColumn get bodyStyle => integer().withDefault(const Constant(0))(); // CarBodyStyle.index
+  IntColumn get accentColorValue => integer().nullable()();
   TextColumn get make => text().nullable()();
   TextColumn get model => text().nullable()();
   TextColumn get plate => text().nullable()();

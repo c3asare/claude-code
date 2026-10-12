@@ -5,6 +5,8 @@ import 'package:latlong2/latlong.dart';
 import 'package:parked_core/parked_core.dart';
 
 import '../../app/providers.dart';
+import '../cars/car_icon.dart';
+import '../cars/cars_page.dart';
 import '../park_prompt/car_picker_sheet.dart';
 
 class MapPage extends ConsumerStatefulWidget {
@@ -32,7 +34,14 @@ class _MapPageState extends ConsumerState<MapPage> {
 
     final active = events.where((e) => e.isActive).toList();
     return Scaffold(
-      appBar: AppBar(title: const Text('Parked')),
+      appBar: AppBar(title: const Text('Parked'), actions: [
+        IconButton(
+          tooltip: 'My cars',
+          icon: const Icon(Icons.directions_car_filled_outlined),
+          onPressed: () => Navigator.push(
+              context, MaterialPageRoute<void>(builder: (_) => const CarsPage())),
+        ),
+      ]),
       body: FlutterMap(
         options: MapOptions(
           initialCenter: active.isEmpty
@@ -53,8 +62,9 @@ class _MapPageState extends ConsumerState<MapPage> {
                 point: LatLng(e.position.lat, e.position.lng),
                 width: 44,
                 height: 44,
-                child: Icon(Icons.directions_car,
-                    color: Color(cars[e.carId]?.colorValue ?? 0xFF3F51B5), size: 36),
+                child: cars[e.carId] == null
+                    ? const Icon(Icons.directions_car, size: 36)
+                    : Tooltip(message: cars[e.carId]!.name, child: CarIcon.of(cars[e.carId]!, size: 44)),
               ),
           ]),
         ],

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:parked_core/parked_core.dart';
 
 import '../../app/providers.dart';
+import '../cars/car_icon.dart';
 
 Future<void> showCarPicker(BuildContext context, ParkEvent pending) =>
     showModalBottomSheet<void>(
@@ -22,7 +23,7 @@ class _CarPicker extends ConsumerWidget {
         const ListTile(title: Text('Which car is this?')),
         for (final c in cars)
           ListTile(
-            leading: Icon(Icons.directions_car, color: Color(c.colorValue)),
+            leading: CarIcon.of(c, size: 40),
             title: Text(c.name),
             onTap: () async {
               await ref
