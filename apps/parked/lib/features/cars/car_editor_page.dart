@@ -35,7 +35,8 @@ class _CarEditorPageState extends ConsumerState<CarEditorPage> {
   Future<void> _save() async {
     final name = _name.text.trim();
     if (name.isEmpty) return;
-    String? orNull(TextEditingController c) => c.text.trim().isEmpty ? null : c.text.trim();
+    String? orNull(TextEditingController c) =>
+        c.text.trim().isEmpty ? null : c.text.trim();
     final car = Car(
       id: widget.car?.id ?? const Uuid().v4(),
       name: name,
@@ -51,7 +52,10 @@ class _CarEditorPageState extends ConsumerState<CarEditorPage> {
     if (mounted) Navigator.pop(context);
   }
 
-  Widget _swatch(int value, {required bool selected, required VoidCallback onTap, String? tooltip}) =>
+  Widget _swatch(int value,
+          {required bool selected,
+          required VoidCallback onTap,
+          String? tooltip}) =>
       Tooltip(
         message: tooltip ?? '',
         child: GestureDetector(
@@ -63,7 +67,9 @@ class _CarEditorPageState extends ConsumerState<CarEditorPage> {
               color: Color(value),
               shape: BoxShape.circle,
               border: Border.all(
-                color: selected ? Theme.of(context).colorScheme.primary : Colors.black26,
+                color: selected
+                    ? Theme.of(context).colorScheme.primary
+                    : Colors.black26,
                 width: selected ? 3 : 1,
               ),
             ),
@@ -93,15 +99,24 @@ class _CarEditorPageState extends ConsumerState<CarEditorPage> {
           TextField(
             controller: _name,
             textCapitalization: TextCapitalization.words,
-            decoration: const InputDecoration(labelText: 'Name', hintText: 'e.g. Blue Civic'),
+            decoration: const InputDecoration(
+                labelText: 'Name', hintText: 'e.g. Blue Civic'),
             onChanged: (_) => setState(() {}),
           ),
           Row(children: [
-            Expanded(child: TextField(controller: _make, decoration: const InputDecoration(labelText: 'Make'))),
+            Expanded(
+                child: TextField(
+                    controller: _make,
+                    decoration: const InputDecoration(labelText: 'Make'))),
             const SizedBox(width: 12),
-            Expanded(child: TextField(controller: _model, decoration: const InputDecoration(labelText: 'Model'))),
+            Expanded(
+                child: TextField(
+                    controller: _model,
+                    decoration: const InputDecoration(labelText: 'Model'))),
           ]),
-          TextField(controller: _plate, decoration: const InputDecoration(labelText: 'Plate (optional)')),
+          TextField(
+              controller: _plate,
+              decoration: const InputDecoration(labelText: 'Plate (optional)')),
           const SizedBox(height: 20),
           Text('Body style', style: Theme.of(context).textTheme.titleSmall),
           const SizedBox(height: 8),
@@ -120,10 +135,13 @@ class _CarEditorPageState extends ConsumerState<CarEditorPage> {
           Wrap(spacing: 10, runSpacing: 10, children: [
             for (final p in carPaints)
               _swatch(p.value,
-                  selected: p.value == _color, tooltip: p.name, onTap: () => setState(() => _color = p.value)),
+                  selected: p.value == _color,
+                  tooltip: p.name,
+                  onTap: () => setState(() => _color = p.value)),
           ]),
           const SizedBox(height: 20),
-          Text('Stripe (optional)', style: Theme.of(context).textTheme.titleSmall),
+          Text('Stripe (optional)',
+              style: Theme.of(context).textTheme.titleSmall),
           const SizedBox(height: 8),
           Wrap(spacing: 10, runSpacing: 10, children: [
             ChoiceChip(
@@ -132,7 +150,9 @@ class _CarEditorPageState extends ConsumerState<CarEditorPage> {
                 onSelected: (_) => setState(() => _accent = null)),
             for (final p in carPaints)
               _swatch(p.value,
-                  selected: p.value == _accent, tooltip: p.name, onTap: () => setState(() => _accent = p.value)),
+                  selected: p.value == _accent,
+                  tooltip: p.name,
+                  onTap: () => setState(() => _accent = p.value)),
           ]),
         ],
       ),

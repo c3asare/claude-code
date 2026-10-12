@@ -3,6 +3,7 @@ import 'package:drift_flutter/drift_flutter.dart';
 
 part 'database.g.dart'; // generated: dart run build_runner build
 
+@DataClassName('CarRow')
 class Cars extends Table {
   TextColumn get id => text()();
   TextColumn get name => text()();
@@ -17,6 +18,7 @@ class Cars extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+@DataClassName('ParkEventRow')
 class ParkEvents extends Table {
   TextColumn get id => text()();
   TextColumn get carId => text().nullable().references(Cars, #id)(); // null = pending
@@ -33,6 +35,7 @@ class ParkEvents extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+@DataClassName('SweepingScheduleRow')
 class SweepingSchedules extends Table {
   TextColumn get id => text()();
   TextColumn get cityCode => text()();
@@ -56,6 +59,9 @@ class SweepingSchedules extends Table {
 @DriftDatabase(tables: [Cars, ParkEvents, SweepingSchedules])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(driftDatabase(name: 'parked'));
+
+  /// In-memory / custom executor for tests.
+  AppDatabase.forTesting(super.executor);
   @override
   int get schemaVersion => 1;
 }

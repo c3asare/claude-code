@@ -18,7 +18,8 @@ class LocalParkNotifier implements ParkNotifier {
       priority: Priority.high,
       category: AndroidNotificationCategory.reminder,
     ),
-    iOS: DarwinNotificationDetails(interruptionLevel: InterruptionLevel.timeSensitive),
+    iOS: DarwinNotificationDetails(
+        interruptionLevel: InterruptionLevel.timeSensitive),
   );
 
   @override
@@ -29,7 +30,8 @@ class LocalParkNotifier implements ParkNotifier {
     ));
     // Android 13+ runtime permission.
     await _plugin
-        .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
         ?.requestNotificationsPermission();
   }
 

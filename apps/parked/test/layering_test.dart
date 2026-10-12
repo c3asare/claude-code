@@ -10,11 +10,13 @@ void main() {
       'lib/main_mobile.dart',
       'lib/bootstrap/mobile_detector.dart',
       'lib/bootstrap/local_park_notifier.dart',
+      'lib/bootstrap/local_alert_scheduler.dart',
     };
     final banned = RegExp(
-        r"import\s+'package:(parked_sensing|geolocator|flutter_activity_recognition|permission_handler|flutter_local_notifications)/");
+        r"import\s+'package:(parked_sensing|geolocator|flutter_activity_recognition|permission_handler|flutter_local_notifications|flutter_timezone|timezone)/");
     final offenders = <String>[];
-    for (final f in Directory('lib').listSync(recursive: true).whereType<File>()) {
+    for (final f
+        in Directory('lib').listSync(recursive: true).whereType<File>()) {
       final path = f.path.replaceAll('\\', '/');
       if (!path.endsWith('.dart') || allowed.contains(path)) continue;
       if (banned.hasMatch(f.readAsStringSync())) offenders.add(path);
@@ -25,7 +27,9 @@ void main() {
   test('parked_core stays pure Dart', () {
     final bad = RegExp(r"import\s+'package:flutter/|import\s+'dart:ui'");
     final offenders = [
-      for (final f in Directory('../../packages/parked_core/lib').listSync(recursive: true).whereType<File>())
+      for (final f in Directory('../../packages/parked_core/lib')
+          .listSync(recursive: true)
+          .whereType<File>())
         if (bad.hasMatch(f.readAsStringSync())) f.path
     ];
     expect(offenders, isEmpty);

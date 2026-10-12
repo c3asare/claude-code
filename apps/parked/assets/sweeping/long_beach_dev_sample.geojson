@@ -1,0 +1,6 @@
+{"type":"FeatureCollection","features":[
+ {"type":"Feature",
+  "properties":{"route_id":"DEV-SAMPLE-1","weekdays":[2],"weeks":[2,4],"start":"08:00","end":"10:00","dev_sample":true,
+                "note":"FAKE dev data around downtown Long Beach. Not a real sweeping route. Replace with real city data."},
+  "geometry":{"type":"Polygon","coordinates":[[[-118.2000,33.7650],[-118.2000,33.7750],[-118.1850,33.7750],[-118.1850,33.7650],[-118.2000,33.7650]]]}}
+]}

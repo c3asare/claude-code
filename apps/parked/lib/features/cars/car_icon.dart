@@ -18,7 +18,9 @@ class CarIcon extends StatelessWidget {
           key: key,
           style: car.bodyStyle,
           color: Color(car.colorValue),
-          accent: car.accentColorValue == null ? null : Color(car.accentColorValue!),
+          accent: car.accentColorValue == null
+              ? null
+              : Color(car.accentColorValue!),
           size: size,
         );
 
@@ -35,7 +37,8 @@ class CarIcon extends StatelessWidget {
 }
 
 class _Spec {
-  const _Spec(this.length, this.width, this.cabinTop, this.cabinBottom, {this.bed = false});
+  const _Spec(this.length, this.width, this.cabinTop, this.cabinBottom,
+      {this.bed = false});
   final double length, width; // fractions of the icon box
   final double cabinTop, cabinBottom; // fractions of car length, nose = 0
   final bool bed;
@@ -75,13 +78,15 @@ class _CarPainter extends CustomPainter {
     for (final fy in const [0.14, 0.68]) {
       for (final x in [left - ww * 0.4, left + w - ww * 0.6]) {
         canvas.drawRRect(
-          RRect.fromRectAndRadius(Rect.fromLTWH(x, top + l * fy, ww, wl), Radius.circular(ww / 2)),
+          RRect.fromRectAndRadius(
+              Rect.fromLTWH(x, top + l * fy, ww, wl), Radius.circular(ww / 2)),
           dark,
         );
       }
     }
 
-    final body = RRect.fromRectAndRadius(Rect.fromLTWH(left, top, w, l), Radius.circular(w * 0.38));
+    final body = RRect.fromRectAndRadius(
+        Rect.fromLTWH(left, top, w, l), Radius.circular(w * 0.38));
     canvas.drawShadow(Path()..addRRect(body), Colors.black, 2, true);
     canvas.drawRRect(body, Paint()..color = color);
 
@@ -93,18 +98,21 @@ class _CarPainter extends CustomPainter {
     }
 
     // Glass: windshield + roof area.
-    final glass = Paint()..color = const Color(0xFF20262E).withValues(alpha: 0.88);
+    final glass = Paint()
+      ..color = const Color(0xFF20262E).withValues(alpha: 0.88);
     final ct = top + l * spec.cabinTop, cb = top + l * spec.cabinBottom;
     canvas.drawRRect(
       RRect.fromRectAndRadius(
-          Rect.fromLTRB(left + w * 0.12, ct, left + w * 0.88, cb), Radius.circular(w * 0.22)),
+          Rect.fromLTRB(left + w * 0.12, ct, left + w * 0.88, cb),
+          Radius.circular(w * 0.22)),
       glass,
     );
     // Roof panel (body color) so glass reads as windshield/rear window.
     final roofInset = (cb - ct) * 0.26;
     canvas.drawRRect(
       RRect.fromRectAndRadius(
-          Rect.fromLTRB(left + w * 0.18, ct + roofInset, left + w * 0.82, cb - roofInset),
+          Rect.fromLTRB(
+              left + w * 0.18, ct + roofInset, left + w * 0.82, cb - roofInset),
           Radius.circular(w * 0.12)),
       Paint()..color = Color.lerp(color, Colors.black, 0.12)!,
     );
@@ -112,7 +120,8 @@ class _CarPainter extends CustomPainter {
     if (spec.bed) {
       canvas.drawRRect(
         RRect.fromRectAndRadius(
-            Rect.fromLTRB(left + w * 0.12, top + l * 0.50, left + w * 0.88, top + l * 0.94),
+            Rect.fromLTRB(left + w * 0.12, top + l * 0.50, left + w * 0.88,
+                top + l * 0.94),
             Radius.circular(w * 0.08)),
         Paint()..color = Color.lerp(color, Colors.black, 0.35)!,
       );
@@ -127,25 +136,39 @@ class _CarPainter extends CustomPainter {
     );
   }
 
-  void _paintMotorcycle(Canvas canvas, double left, double top, double w, double l, double s) {
+  void _paintMotorcycle(
+      Canvas canvas, double left, double top, double w, double l, double s) {
     final dark = Paint()..color = const Color(0xFF15161A);
     final cx = left + w / 2;
     canvas.drawRRect(
-        RRect.fromRectAndRadius(Rect.fromLTWH(cx - w * 0.3, top, w * 0.6, l * 0.22), Radius.circular(w * 0.3)), dark);
+        RRect.fromRectAndRadius(
+            Rect.fromLTWH(cx - w * 0.3, top, w * 0.6, l * 0.22),
+            Radius.circular(w * 0.3)),
+        dark);
     canvas.drawRRect(
-        RRect.fromRectAndRadius(Rect.fromLTWH(cx - w * 0.3, top + l * 0.78, w * 0.6, l * 0.22), Radius.circular(w * 0.3)), dark);
+        RRect.fromRectAndRadius(
+            Rect.fromLTWH(cx - w * 0.3, top + l * 0.78, w * 0.6, l * 0.22),
+            Radius.circular(w * 0.3)),
+        dark);
     canvas.drawRRect(
-      RRect.fromRectAndRadius(Rect.fromLTWH(cx - w * 0.55, top + l * 0.18, w * 1.1, l * 0.64), Radius.circular(w * 0.5)),
+      RRect.fromRectAndRadius(
+          Rect.fromLTWH(cx - w * 0.55, top + l * 0.18, w * 1.1, l * 0.64),
+          Radius.circular(w * 0.5)),
       Paint()..color = color,
     );
     if (accent != null) {
-      canvas.drawRect(Rect.fromLTWH(cx - w * 0.1, top + l * 0.2, w * 0.2, l * 0.6), Paint()..color = accent!);
+      canvas.drawRect(
+          Rect.fromLTWH(cx - w * 0.1, top + l * 0.2, w * 0.2, l * 0.6),
+          Paint()..color = accent!);
     }
     // Handlebars.
     canvas.drawLine(
       Offset(cx - w * 2.0, top + l * 0.24),
       Offset(cx + w * 2.0, top + l * 0.24),
-      Paint()..color = const Color(0xFF15161A)..strokeWidth = s * 0.04..strokeCap = StrokeCap.round,
+      Paint()
+        ..color = const Color(0xFF15161A)
+        ..strokeWidth = s * 0.04
+        ..strokeCap = StrokeCap.round,
     );
   }
 
