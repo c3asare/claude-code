@@ -44,7 +44,7 @@ flutter pub get
 ## Known gaps / next work
 1. **Real sweeping data.** `assets/sweeping/long_beach_dev_sample.geojson` is FAKE. Next: write per-city converters into the normalized GeoJSON format (see `parseSweepingGeoJson`). LA candidates are in `docs/RESEARCH.md` (unverified; need network access to data.lacity.org / ArcGIS). Long Beach needs a source.
 2. **Map tiles**: OSM public tiles are dev-only. Pick MapTiler/Stadia/self-hosted before release.
-3. **Pin adjust**: iOS position may be off; add drag-to-correct on the confirm step.
+3. ~~Pin adjust~~ Done: "Adjust pin" on each parked car lets you drag the map and re-plans alerts. Needs a device check.
 4. **Auto "Left" detection** (departure when you start driving again). Currently manual button.
 5. **Desktop sync**: companion needs a data source (cloud or file export).
 6. **Exact-time alerts**: scheduler uses inexact alarms (can slip minutes in Doze). Revisit for the 1-hour reminder.
