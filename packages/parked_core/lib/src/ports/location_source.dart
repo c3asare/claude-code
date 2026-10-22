@@ -9,6 +9,7 @@ class LocationFix {
 
 abstract interface class LocationSource {
   /// One-shot fix; null on timeout or denied permission.
-  Future<LocationFix?> currentFix({Duration timeout = const Duration(seconds: 15)});
+  Future<LocationFix?> currentFix(
+      {Duration timeout = const Duration(seconds: 15)});
   Future<LocationFix?> lastKnown();
 }

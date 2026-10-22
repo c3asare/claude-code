@@ -16,7 +16,8 @@ import '../models/sweeping_schedule.dart';
 ///   side     : optional StreetSide name
 ///   skip     : optional ["YYYY-MM-DD", ...] holiday suspensions
 ///   updated  : optional ISO date of the source data
-List<SweepingSchedule> parseSweepingGeoJson(String json, {required String cityCode}) {
+List<SweepingSchedule> parseSweepingGeoJson(String json,
+    {required String cityCode}) {
   final root = jsonDecode(json) as Map<String, dynamic>;
   final out = <SweepingSchedule>[];
   for (final f in (root['features'] as List).cast<Map<String, dynamic>>()) {
@@ -30,7 +31,8 @@ List<SweepingSchedule> parseSweepingGeoJson(String json, {required String cityCo
     final routeId = props['route_id'].toString();
     for (var i = 0; i < polygons.length; i++) {
       final outer = (polygons[i].first as List)
-          .map((c) => GeoPoint((c[1] as num).toDouble(), (c[0] as num).toDouble())) // GeoJSON is [lng, lat]
+          .map((c) => GeoPoint((c[1] as num).toDouble(),
+              (c[0] as num).toDouble())) // GeoJSON is [lng, lat]
           .toList();
       out.add(SweepingSchedule(
         id: '$cityCode:$routeId:$i',
@@ -51,7 +53,9 @@ List<SweepingSchedule> parseSweepingGeoJson(String json, {required String cityCo
             DateTime.parse(d as String),
         },
         polygon: outer,
-        sourceUpdatedAt: props['updated'] == null ? null : DateTime.parse(props['updated'] as String),
+        sourceUpdatedAt: props['updated'] == null
+            ? null
+            : DateTime.parse(props['updated'] as String),
       ));
     }
   }

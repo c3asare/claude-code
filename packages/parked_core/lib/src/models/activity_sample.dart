@@ -1,4 +1,12 @@
-enum ActivityKind { inVehicle, onFoot, walking, running, cycling, still, unknown }
+enum ActivityKind {
+  inVehicle,
+  onFoot,
+  walking,
+  running,
+  cycling,
+  still,
+  unknown
+}
 
 enum ActivityConfidence { low, medium, high }
 

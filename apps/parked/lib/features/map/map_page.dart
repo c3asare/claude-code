@@ -22,6 +22,20 @@ class _MapPageState extends ConsumerState<MapPage> {
   final _map = MapController();
   String? _promptedFor;
 
+  /// Event whose pin is being repositioned (map center = new spot).
+  ParkEvent? _adjusting;
+
+  Future<void> _commitAdjust(Car? car) async {
+    final e = _adjusting;
+    if (e == null) return;
+    final c = _map.camera.center;
+    final moved = e.copyWith(position: GeoPoint(c.latitude, c.longitude));
+    await ref.read(parkingRepositoryProvider).saveEvent(moved);
+    // Re-plan sweeping alerts for the corrected spot.
+    await ref.read(sweepingAlertServiceProvider).onParked(moved, car: car);
+    if (mounted) setState(() => _adjusting = null);
+  }
+
   Future<void> _parkHere() async {
     final messenger = ScaffoldMessenger.of(context);
     final fix = await ref.read(locationSourceProvider)?.currentFix();
@@ -113,21 +127,60 @@ class _MapPageState extends ConsumerState<MapPage> {
             ]),
           ],
         ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: SafeArea(
-            child: Padding(
-              // Leave room for the FAB.
-              padding: EdgeInsets.only(bottom: canPin ? 72 : 0),
-              child: ActiveCarsPanel(
-                events: active,
-                cars: cars,
-                onTapEvent: (e) =>
-                    _map.move(LatLng(e.position.lat, e.position.lng), 17),
+        if (_adjusting != null)
+          const IgnorePointer(
+            child: Center(
+              child: Padding(
+                padding: EdgeInsets.only(bottom: 36), // pin tip at center
+                child: Icon(Icons.location_on, size: 48, color: Colors.red),
               ),
             ),
           ),
-        ),
+        if (_adjusting != null)
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: SafeArea(
+              child: Card(
+                margin: const EdgeInsets.all(12),
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(mainAxisSize: MainAxisSize.min, children: [
+                    const Text('Drag the map so the pin sits on your car.'),
+                    const SizedBox(height: 8),
+                    Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                      TextButton(
+                          onPressed: () => setState(() => _adjusting = null),
+                          child: const Text('Cancel')),
+                      FilledButton(
+                          onPressed: () =>
+                              _commitAdjust(cars[_adjusting!.carId]),
+                          child: const Text('Set pin here')),
+                    ]),
+                  ]),
+                ),
+              ),
+            ),
+          )
+        else
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: SafeArea(
+              child: Padding(
+                // Leave room for the FAB.
+                padding: EdgeInsets.only(bottom: canPin ? 72 : 0),
+                child: ActiveCarsPanel(
+                  events: active,
+                  cars: cars,
+                  onTapEvent: (e) =>
+                      _map.move(LatLng(e.position.lat, e.position.lng), 17),
+                  onAdjust: (e) {
+                    _map.move(LatLng(e.position.lat, e.position.lng), 18);
+                    setState(() => _adjusting = e);
+                  },
+                ),
+              ),
+            ),
+          ),
       ]),
     );
   }

@@ -21,7 +21,9 @@ class SweepingStatus {
 
   /// Parked inside a window that has already started.
   bool isInWindow(DateTime now) =>
-      window != null && !now.isBefore(window!.start) && now.isBefore(window!.end);
+      window != null &&
+      !now.isBefore(window!.start) &&
+      now.isBefore(window!.end);
 }
 
 /// Looks up the sweeping rule for a parked spot and schedules alerts.
@@ -52,12 +54,15 @@ class SweepingAlertService {
         bestWindow = w;
       }
     }
-    if (best == null || bestWindow == null) return const SweepingStatus.unknown();
-    return SweepingStatus(best, bestWindow, planner.alertTimes(best, t, leads: leads));
+    if (best == null || bestWindow == null)
+      return const SweepingStatus.unknown();
+    return SweepingStatus(
+        best, bestWindow, planner.alertTimes(best, t, leads: leads));
   }
 
   /// Call once the user has confirmed which car this is.
-  Future<SweepingStatus> onParked(ParkEvent e, {Car? car, DateTime? now}) async {
+  Future<SweepingStatus> onParked(ParkEvent e,
+      {Car? car, DateTime? now}) async {
     final status = await statusFor(e, now: now);
     await _scheduler.cancelWhere(e.id);
     final who = car?.name ?? 'Your car';

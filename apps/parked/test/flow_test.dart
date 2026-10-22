@@ -77,4 +77,41 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.textContaining('Sweeping is happening now'), findsNothing);
   });
+
+  testWidgets('adjust pin keeps the car parked and re-plans alerts',
+      (tester) async {
+    final parking = InMemoryParkingRepository();
+    final sweeping = InMemorySweepingRepository();
+    await parking.saveCar(Car(
+        id: 'c1',
+        name: 'Blue Civic',
+        colorValue: 0xFF2459B8,
+        createdAt: DateTime(2026)));
+    await parking.saveEvent(ParkEvent(
+        id: 'e1',
+        carId: 'c1',
+        position: const GeoPoint(1, 1),
+        parkedAt: DateTime.now(),
+        source: ParkSource.auto));
+
+    await tester.pumpWidget(ProviderScope(
+      overrides: [
+        parkingRepositoryProvider.overrideWithValue(parking),
+        sweepingRepositoryProvider.overrideWithValue(sweeping),
+        mapTilesEnabledProvider.overrideWithValue(false),
+      ],
+      child: const ParkedApp(),
+    ));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('Adjust pin'));
+    await tester.pumpAndSettle();
+    expect(find.text('Set pin here'), findsOneWidget);
+
+    await tester.tap(find.text('Set pin here'));
+    await tester.pumpAndSettle();
+    expect(find.text('Set pin here'), findsNothing);
+    final open = await parking.watchOpenEvents().first;
+    expect(open.single.isActive, isTrue);
+  });
 }

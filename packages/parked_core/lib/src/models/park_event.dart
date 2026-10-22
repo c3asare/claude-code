@@ -33,6 +33,7 @@ class ParkEvent {
   bool get isActive => departedAt == null && carId != null;
 
   ParkEvent copyWith({
+    GeoPoint? position,
     String? carId,
     DateTime? departedAt,
     String? address,
@@ -41,7 +42,7 @@ class ParkEvent {
   }) =>
       ParkEvent(
         id: id,
-        position: position,
+        position: position ?? this.position,
         parkedAt: parkedAt,
         source: source,
         accuracyMeters: accuracyMeters,

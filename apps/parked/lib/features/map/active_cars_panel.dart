@@ -19,10 +19,15 @@ String _fmtWindow(SweepWindow w) {
 /// One row per currently parked car: where/when, sweeping status, and "Left".
 class ActiveCarsPanel extends ConsumerWidget {
   const ActiveCarsPanel(
-      {super.key, required this.events, required this.cars, this.onTapEvent});
+      {super.key,
+      required this.events,
+      required this.cars,
+      this.onTapEvent,
+      this.onAdjust});
   final List<ParkEvent> events;
   final Map<String, Car> cars;
   final void Function(ParkEvent)? onTapEvent;
+  final void Function(ParkEvent)? onAdjust;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -31,17 +36,23 @@ class ActiveCarsPanel extends ConsumerWidget {
       margin: const EdgeInsets.all(8),
       child: Column(mainAxisSize: MainAxisSize.min, children: [
         for (final e in events)
-          _Row(event: e, car: cars[e.carId], onTap: onTapEvent),
+          _Row(
+              event: e,
+              car: cars[e.carId],
+              onTap: onTapEvent,
+              onAdjust: onAdjust),
       ]),
     );
   }
 }
 
 class _Row extends ConsumerWidget {
-  const _Row({required this.event, required this.car, this.onTap});
+  const _Row(
+      {required this.event, required this.car, this.onTap, this.onAdjust});
   final ParkEvent event;
   final Car? car;
   final void Function(ParkEvent)? onTap;
+  final void Function(ParkEvent)? onAdjust;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -79,15 +90,23 @@ class _Row extends ConsumerWidget {
           : CarIcon.of(car!, size: 40),
       title: Text(car?.name ?? 'Car'),
       subtitle: Text(text, style: TextStyle(color: color)),
-      trailing: TextButton(
-        onPressed: () async {
-          await ref
-              .read(parkingRepositoryProvider)
-              .saveEvent(event.copyWith(departedAt: DateTime.now()));
-          await ref.read(sweepingAlertServiceProvider).onDeparted(event);
-        },
-        child: const Text('Left'),
-      ),
+      trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+        if (onAdjust != null)
+          IconButton(
+            tooltip: 'Adjust pin',
+            icon: const Icon(Icons.edit_location_alt_outlined),
+            onPressed: () => onAdjust!(event),
+          ),
+        TextButton(
+          onPressed: () async {
+            await ref
+                .read(parkingRepositoryProvider)
+                .saveEvent(event.copyWith(departedAt: DateTime.now()));
+            await ref.read(sweepingAlertServiceProvider).onDeparted(event);
+          },
+          child: const Text('Left'),
+        ),
+      ]),
     );
   }
 }

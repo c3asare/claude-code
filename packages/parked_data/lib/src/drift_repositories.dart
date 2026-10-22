@@ -8,8 +8,10 @@ import 'database.dart';
 int _maskOf(Iterable<int> values, int base) =>
     values.fold(0, (m, v) => m | (1 << (v - base)));
 
-Set<int> _setOf(int mask, int base, int count) =>
-    {for (var i = 0; i < count; i++) if (mask & (1 << i) != 0) i + base};
+Set<int> _setOf(int mask, int base, int count) => {
+      for (var i = 0; i < count; i++)
+        if (mask & (1 << i) != 0) i + base
+    };
 
 class DriftParkingRepository implements ParkingRepository {
   DriftParkingRepository(this._db);
@@ -20,7 +22,8 @@ class DriftParkingRepository implements ParkingRepository {
         name: r.name,
         colorValue: r.colorValue,
         accentColorValue: r.accentColorValue,
-        bodyStyle: CarBodyStyle.values[r.bodyStyle.clamp(0, CarBodyStyle.values.length - 1)],
+        bodyStyle: CarBodyStyle
+            .values[r.bodyStyle.clamp(0, CarBodyStyle.values.length - 1)],
         createdAt: r.createdAt,
         make: r.make,
         model: r.model,
@@ -47,23 +50,25 @@ class DriftParkingRepository implements ParkingRepository {
           .map((rows) => rows.map(_car).toList());
 
   @override
-  Future<void> saveCar(Car c) => _db.into(_db.cars).insertOnConflictUpdate(CarsCompanion.insert(
-        id: c.id,
-        name: c.name,
-        colorValue: c.colorValue,
-        createdAt: c.createdAt,
-        bodyStyle: Value(c.bodyStyle.index),
-        accentColorValue: Value(c.accentColorValue),
-        make: Value(c.make),
-        model: Value(c.model),
-        plate: Value(c.plate),
-      ));
+  Future<void> saveCar(Car c) =>
+      _db.into(_db.cars).insertOnConflictUpdate(CarsCompanion.insert(
+            id: c.id,
+            name: c.name,
+            colorValue: c.colorValue,
+            createdAt: c.createdAt,
+            bodyStyle: Value(c.bodyStyle.index),
+            accentColorValue: Value(c.accentColorValue),
+            make: Value(c.make),
+            model: Value(c.model),
+            plate: Value(c.plate),
+          ));
 
   @override
   Future<void> deleteCar(String id) async {
     await _db.transaction(() async {
       // Keep history but detach it; pending/active events for this car close.
-      await (_db.update(_db.parkEvents)..where((e) => e.carId.equals(id) & e.departedAt.isNull()))
+      await (_db.update(_db.parkEvents)
+            ..where((e) => e.carId.equals(id) & e.departedAt.isNull()))
           .write(ParkEventsCompanion(departedAt: Value(DateTime.now())));
       await (_db.update(_db.parkEvents)..where((e) => e.carId.equals(id)))
           .write(const ParkEventsCompanion(carId: Value(null)));
@@ -72,16 +77,16 @@ class DriftParkingRepository implements ParkingRepository {
   }
 
   @override
-  Stream<List<ParkEvent>> watchOpenEvents() =>
-      (_db.select(_db.parkEvents)
-            ..where((e) => e.departedAt.isNull())
-            ..orderBy([(e) => OrderingTerm.desc(e.parkedAt)]))
-          .watch()
-          .map((rows) => rows.map(_event).toList());
+  Stream<List<ParkEvent>> watchOpenEvents() => (_db.select(_db.parkEvents)
+        ..where((e) => e.departedAt.isNull())
+        ..orderBy([(e) => OrderingTerm.desc(e.parkedAt)]))
+      .watch()
+      .map((rows) => rows.map(_event).toList());
 
   @override
-  Future<void> saveEvent(ParkEvent e) =>
-      _db.into(_db.parkEvents).insertOnConflictUpdate(ParkEventsCompanion.insert(
+  Future<void> saveEvent(ParkEvent e) => _db
+      .into(_db.parkEvents)
+      .insertOnConflictUpdate(ParkEventsCompanion.insert(
         id: e.id,
         carId: Value(e.carId),
         lat: e.position.lat,
@@ -126,7 +131,8 @@ class DriftSweepingRepository implements SweepingRepository {
   }
 
   List<GeoPoint> _ring(String json) => [
-        for (final c in (jsonDecode(json) as List)) GeoPoint((c[0] as num).toDouble(), (c[1] as num).toDouble())
+        for (final c in (jsonDecode(json) as List))
+          GeoPoint((c[0] as num).toDouble(), (c[1] as num).toDouble())
       ];
 
   SweepingSchedule _schedule(SweepingScheduleRow r) => SweepingSchedule(
@@ -138,7 +144,10 @@ class DriftSweepingRepository implements SweepingRepository {
         startMinute: r.startMinute,
         endMinute: r.endMinute,
         side: StreetSide.values[r.side],
-        skipDates: {for (final d in (jsonDecode(r.skipDatesJson) as List)) DateTime.parse(d as String)},
+        skipDates: {
+          for (final d in (jsonDecode(r.skipDatesJson) as List))
+            DateTime.parse(d as String)
+        },
         polygon: _ring(r.polygonJson),
         sourceUpdatedAt: r.sourceUpdatedAt,
       );
@@ -146,7 +155,9 @@ class DriftSweepingRepository implements SweepingRepository {
   @override
   Future<void> replaceCity(String cityCode, List<SweepingSchedule> schedules) =>
       _db.transaction(() async {
-        await (_db.delete(_db.sweepingSchedules)..where((s) => s.cityCode.equals(cityCode))).go();
+        await (_db.delete(_db.sweepingSchedules)
+              ..where((s) => s.cityCode.equals(cityCode)))
+            .go();
         await _db.batch((b) {
           b.insertAll(_db.sweepingSchedules, [
             for (final s in schedules)
@@ -159,12 +170,19 @@ class DriftSweepingRepository implements SweepingRepository {
                 startMinute: s.startMinute,
                 endMinute: s.endMinute,
                 side: s.side.index,
-                skipDatesJson: Value(jsonEncode([for (final d in s.skipDates) d.toIso8601String()])),
-                polygonJson: jsonEncode([for (final g in s.polygon) [g.lat, g.lng]]),
-                minLat: s.polygon.map((g) => g.lat).reduce((a, b) => a < b ? a : b),
-                maxLat: s.polygon.map((g) => g.lat).reduce((a, b) => a > b ? a : b),
-                minLng: s.polygon.map((g) => g.lng).reduce((a, b) => a < b ? a : b),
-                maxLng: s.polygon.map((g) => g.lng).reduce((a, b) => a > b ? a : b),
+                skipDatesJson: Value(jsonEncode(
+                    [for (final d in s.skipDates) d.toIso8601String()])),
+                polygonJson: jsonEncode([
+                  for (final g in s.polygon) [g.lat, g.lng]
+                ]),
+                minLat:
+                    s.polygon.map((g) => g.lat).reduce((a, b) => a < b ? a : b),
+                maxLat:
+                    s.polygon.map((g) => g.lat).reduce((a, b) => a > b ? a : b),
+                minLng:
+                    s.polygon.map((g) => g.lng).reduce((a, b) => a < b ? a : b),
+                maxLng:
+                    s.polygon.map((g) => g.lng).reduce((a, b) => a > b ? a : b),
                 sourceUpdatedAt: Value(s.sourceUpdatedAt),
               ),
           ]);

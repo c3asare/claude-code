@@ -16,10 +16,12 @@ class SweepingPlanner {
   bool _runsOn(SweepingSchedule s, DateTime day) =>
       s.weekdays.contains(day.weekday) &&
       s.weeksOfMonth.contains(weekOfMonth(day)) &&
-      !s.skipDates.any((k) => k.year == day.year && k.month == day.month && k.day == day.day);
+      !s.skipDates.any((k) =>
+          k.year == day.year && k.month == day.month && k.day == day.day);
 
   /// First window whose end is after [from], searching up to [horizonDays].
-  SweepWindow? nextWindow(SweepingSchedule s, DateTime from, {int horizonDays = 62}) {
+  SweepWindow? nextWindow(SweepingSchedule s, DateTime from,
+      {int horizonDays = 62}) {
     final day0 = DateTime(from.year, from.month, from.day);
     for (var i = 0; i <= horizonDays; i++) {
       final day = DateTime(day0.year, day0.month, day0.day + i);
@@ -40,6 +42,9 @@ class SweepingPlanner {
   }) {
     final w = nextWindow(s, from);
     if (w == null) return const [];
-    return [for (final l in leads) w.start.subtract(l)].where((t) => t.isAfter(from)).toList()..sort();
+    return [for (final l in leads) w.start.subtract(l)]
+        .where((t) => t.isAfter(from))
+        .toList()
+      ..sort();
   }
 }

@@ -8,7 +8,8 @@ class Cars extends Table {
   TextColumn get id => text()();
   TextColumn get name => text()();
   IntColumn get colorValue => integer()();
-  IntColumn get bodyStyle => integer().withDefault(const Constant(0))(); // CarBodyStyle.index
+  IntColumn get bodyStyle =>
+      integer().withDefault(const Constant(0))(); // CarBodyStyle.index
   IntColumn get accentColorValue => integer().nullable()();
   TextColumn get make => text().nullable()();
   TextColumn get model => text().nullable()();
@@ -21,7 +22,8 @@ class Cars extends Table {
 @DataClassName('ParkEventRow')
 class ParkEvents extends Table {
   TextColumn get id => text()();
-  TextColumn get carId => text().nullable().references(Cars, #id)(); // null = pending
+  TextColumn get carId =>
+      text().nullable().references(Cars, #id)(); // null = pending
   RealColumn get lat => real()();
   RealColumn get lng => real()();
   RealColumn get accuracyMeters => real().nullable()();
@@ -46,7 +48,8 @@ class SweepingSchedules extends Table {
   IntColumn get endMinute => integer()();
   IntColumn get side => integer()(); // StreetSide.index
   TextColumn get skipDatesJson => text().withDefault(const Constant('[]'))();
-  TextColumn get polygonJson => text()(); // [[lat,lng],...]; bbox cols below for prefilter
+  TextColumn get polygonJson =>
+      text()(); // [[lat,lng],...]; bbox cols below for prefilter
   RealColumn get minLat => real()();
   RealColumn get maxLat => real()();
   RealColumn get minLng => real()();

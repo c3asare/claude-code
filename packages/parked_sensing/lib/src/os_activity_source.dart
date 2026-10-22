@@ -1,6 +1,7 @@
 import 'dart:async';
 
-import 'package:flutter_activity_recognition/flutter_activity_recognition.dart' as ar;
+import 'package:flutter_activity_recognition/flutter_activity_recognition.dart'
+    as ar;
 import 'package:parked_core/parked_core.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -30,7 +31,8 @@ class OsActivitySource implements ActivitySource {
   @override
   Future<void> start() async {
     _sub ??= ar.FlutterActivityRecognition.instance.activityStream.listen((a) {
-      _out.add(ActivitySample(_kind(a.type), _conf(a.confidence), DateTime.now()));
+      _out.add(
+          ActivitySample(_kind(a.type), _conf(a.confidence), DateTime.now()));
     });
   }
 

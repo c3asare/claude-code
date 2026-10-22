@@ -5,10 +5,12 @@ import 'package:parked_core/parked_core.dart';
 /// when a fix is worth the battery.
 class GeolocatorLocationSource implements LocationSource {
   @override
-  Future<LocationFix?> currentFix({Duration timeout = const Duration(seconds: 15)}) async {
+  Future<LocationFix?> currentFix(
+      {Duration timeout = const Duration(seconds: 15)}) async {
     try {
       final p = await Geolocator.getCurrentPosition(
-        locationSettings: LocationSettings(accuracy: LocationAccuracy.high, timeLimit: timeout),
+        locationSettings: LocationSettings(
+            accuracy: LocationAccuracy.high, timeLimit: timeout),
       );
       return _fix(p);
     } catch (_) {

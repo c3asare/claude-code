@@ -18,7 +18,8 @@ class NativeBackgroundSource implements BackgroundParkSource {
   /// detection while the app is closed will not work then.
   Future<bool> requestPermissions() async {
     await Permission.notification.request();
-    await Permission.activityRecognition.request(); // Android; Core Motion on iOS
+    await Permission.activityRecognition
+        .request(); // Android; Core Motion on iOS
     if (!(await Permission.locationWhenInUse.request()).isGranted) return false;
     return (await Permission.locationAlways.request()).isGranted;
   }
@@ -31,18 +32,23 @@ class NativeBackgroundSource implements BackgroundParkSource {
 
   @override
   Future<List<DetectedPark>> drainDetected() async {
-    final raw = await _channel.invokeListMethod<Map<Object?, Object?>>('drainDetected') ?? const [];
+    final raw = await _channel
+            .invokeListMethod<Map<Object?, Object?>>('drainDetected') ??
+        const [];
     return [
       for (final m in raw)
         DetectedPark(
           id: m['id'] as String,
-          position: GeoPoint((m['lat'] as num).toDouble(), (m['lng'] as num).toDouble()),
+          position: GeoPoint(
+              (m['lat'] as num).toDouble(), (m['lng'] as num).toDouble()),
           accuracyMeters: (m['accuracy'] as num?)?.toDouble(),
-          parkedAt: DateTime.fromMillisecondsSinceEpoch((m['parkedAtMillis'] as num).toInt()),
+          parkedAt: DateTime.fromMillisecondsSinceEpoch(
+              (m['parkedAtMillis'] as num).toInt()),
         )
     ];
   }
 
   @override
-  Future<String?> launchedFromPark() => _channel.invokeMethod<String>('launchedFromPark');
+  Future<String?> launchedFromPark() =>
+      _channel.invokeMethod<String>('launchedFromPark');
 }

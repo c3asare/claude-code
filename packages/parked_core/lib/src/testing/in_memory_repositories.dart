@@ -49,7 +49,9 @@ class InMemoryParkingRepository implements ParkingRepository {
 
   @override
   Future<List<ParkEvent>> history({String? carId, int limit = 100}) async {
-    final all = _events.values.where((e) => carId == null || e.carId == carId).toList()
+    final all = _events.values
+        .where((e) => carId == null || e.carId == carId)
+        .toList()
       ..sort((a, b) => b.parkedAt.compareTo(a.parkedAt));
     return all.take(limit).toList();
   }
@@ -66,6 +68,7 @@ class InMemorySweepingRepository implements SweepingRepository {
       ];
 
   @override
-  Future<void> replaceCity(String cityCode, List<SweepingSchedule> schedules) async =>
+  Future<void> replaceCity(
+          String cityCode, List<SweepingSchedule> schedules) async =>
       _byCity[cityCode] = schedules;
 }

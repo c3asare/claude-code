@@ -5,9 +5,14 @@ class FakeScheduler implements AlertScheduler {
   final scheduled = <String, DateTime>{};
   final bodies = <String, String>{};
   @override
-  Future<void> cancelWhere(String p) async => scheduled.removeWhere((k, _) => k.startsWith(p));
+  Future<void> cancelWhere(String p) async =>
+      scheduled.removeWhere((k, _) => k.startsWith(p));
   @override
-  Future<void> schedule({required String key, required DateTime at, required String title, required String body}) async {
+  Future<void> schedule(
+      {required String key,
+      required DateTime at,
+      required String title,
+      required String body}) async {
     scheduled[key] = at;
     bodies[key] = body;
   }
@@ -22,7 +27,8 @@ const geojson = '''
 ]}''';
 
 void main() {
-  test('parses normalized GeoJSON (lng,lat order, weeks default, skip dates)', () {
+  test('parses normalized GeoJSON (lng,lat order, weeks default, skip dates)',
+      () {
     final s = parseSweepingGeoJson(geojson, cityCode: 'LB');
     expect(s, hasLength(2));
     expect(s[0].weeksOfMonth, {2, 4});
@@ -38,8 +44,11 @@ void main() {
     final sched = FakeScheduler();
     final svc = SweepingAlertService(repo, sched);
     final e = ParkEvent(
-      id: 'e1', position: const GeoPoint(33.77, -118.19),
-      parkedAt: DateTime(2026, 10, 12, 20), source: ParkSource.auto, carId: 'c1',
+      id: 'e1',
+      position: const GeoPoint(33.77, -118.19),
+      parkedAt: DateTime(2026, 10, 12, 20),
+      source: ParkSource.auto,
+      carId: 'c1',
     );
     // Mon night; next window is Tue Oct 13 8:00 -> alerts at Oct 12 20:00(12h, not after now) and Oct 13 7:00.
     final st = await svc.onParked(e, now: DateTime(2026, 10, 12, 20, 30));
@@ -53,7 +62,11 @@ void main() {
     final repo = InMemorySweepingRepository();
     await repo.replaceCity('LB', parseSweepingGeoJson(geojson, cityCode: 'LB'));
     final svc = SweepingAlertService(repo, FakeScheduler());
-    final e = ParkEvent(id: 'e', position: const GeoPoint(40, -100), parkedAt: DateTime(2026), source: ParkSource.manual);
+    final e = ParkEvent(
+        id: 'e',
+        position: const GeoPoint(40, -100),
+        parkedAt: DateTime(2026),
+        source: ParkSource.manual);
     expect((await svc.statusFor(e)).isUnknown, isTrue);
   });
 }

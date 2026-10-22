@@ -54,7 +54,8 @@ class Car {
         colorValue: colorValue ?? this.colorValue,
         createdAt: createdAt,
         bodyStyle: bodyStyle ?? this.bodyStyle,
-        accentColorValue: clearAccent ? null : (accentColorValue ?? this.accentColorValue),
+        accentColorValue:
+            clearAccent ? null : (accentColorValue ?? this.accentColorValue),
         make: make ?? this.make,
         model: model ?? this.model,
         plate: plate ?? this.plate,

@@ -38,6 +38,9 @@ void main() {
         ),
       ),
     ));
-    await expectLater(find.byType(ColoredBox).first, matchesGoldenFile('goldens/car_gallery.png'));
-  }, skip: !Platform.isLinux); // pixel output differs per platform; goldens are generated on Linux/CI
+    await expectLater(find.byType(ColoredBox).first,
+        matchesGoldenFile('goldens/car_gallery.png'));
+  },
+      skip: !Platform
+          .isLinux); // pixel output differs per platform; goldens are generated on Linux/CI
 }

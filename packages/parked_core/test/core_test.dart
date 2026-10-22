@@ -3,7 +3,8 @@ import 'package:test/test.dart';
 
 void main() {
   final t0 = DateTime(2026, 10, 12, 8);
-  ActivitySample s(ActivityKind k, int sec, [ActivityConfidence c = ActivityConfidence.high]) =>
+  ActivitySample s(ActivityKind k, int sec,
+          [ActivityConfidence c = ActivityConfidence.high]) =>
       ActivitySample(k, c, t0.add(Duration(seconds: sec)));
 
   group('ParkTransitionEngine', () {
@@ -35,9 +36,13 @@ void main() {
   group('SweepingPlanner', () {
     // 2nd and 4th Tuesday, 8-10am.
     final sched = SweepingSchedule(
-      id: 'x', cityCode: 'LA', routeId: '1A',
-      weekdays: {DateTime.tuesday}, weeksOfMonth: {2, 4},
-      startMinute: 8 * 60, endMinute: 10 * 60,
+      id: 'x',
+      cityCode: 'LA',
+      routeId: '1A',
+      weekdays: {DateTime.tuesday},
+      weeksOfMonth: {2, 4},
+      startMinute: 8 * 60,
+      endMinute: 10 * 60,
     );
     const planner = SweepingPlanner();
 
@@ -49,11 +54,17 @@ void main() {
 
     test('skips holidays', () {
       final s2 = SweepingSchedule(
-        id: 'y', cityCode: 'LA', routeId: '1A', weekdays: {DateTime.tuesday},
-        weeksOfMonth: {2, 4}, startMinute: 480, endMinute: 600,
+        id: 'y',
+        cityCode: 'LA',
+        routeId: '1A',
+        weekdays: {DateTime.tuesday},
+        weeksOfMonth: {2, 4},
+        startMinute: 480,
+        endMinute: 600,
         skipDates: {DateTime(2026, 10, 13)},
       );
-      expect(planner.nextWindow(s2, DateTime(2026, 10, 12))?.start, DateTime(2026, 10, 27, 8));
+      expect(planner.nextWindow(s2, DateTime(2026, 10, 12))?.start,
+          DateTime(2026, 10, 27, 8));
     });
 
     test('alert times drop past instants', () {
@@ -63,7 +74,12 @@ void main() {
   });
 
   test('pointInPolygon', () {
-    const ring = [GeoPoint(0, 0), GeoPoint(0, 2), GeoPoint(2, 2), GeoPoint(2, 0)];
+    const ring = [
+      GeoPoint(0, 0),
+      GeoPoint(0, 2),
+      GeoPoint(2, 2),
+      GeoPoint(2, 0)
+    ];
     expect(pointInPolygon(const GeoPoint(1, 1), ring), isTrue);
     expect(pointInPolygon(const GeoPoint(3, 1), ring), isFalse);
   });
